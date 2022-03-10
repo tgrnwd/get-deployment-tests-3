@@ -36,21 +36,29 @@ jobs:
   #       run: |
   #         echo ${{ toJSON(github.event) }}
 
-  # demo:
-  #   runs-on: ubuntu-latest
-  #   if: ${{ github.event.workflow_run.conclusion == 'success' }}
-  #   environment: demo
-  #   steps:
-  #   - name: Download artifact
-  #     uses: dawidd6/action-download-artifact@v2
-  #     with:
-  #       github_token: ${{secrets.GITHUB_TOKEN}}
-  #       workflow: build.yml
-  #       run_id: ${{ github.event.workflow_run.id }}
-  #       name: timestamp.txt
+  demo:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    environment: demo
+    steps:
+    - name: "Get Draft Release"
+      id: draft_release
+      uses: InsonusK/get-latest-release@v1.0.1
+      with:
+        myToken: ${{ secrets.GITHUB_TOKEN }}
+        exclude_types: "release"
+        view_top: 1
 
-  #   - name: cat timestamp
-  #     run: cat timestamp.txt
+    - name: Download artifact
+      uses: dawidd6/action-download-artifact@v2
+      with:
+        github_token: ${{secrets.GITHUB_TOKEN}}
+        workflow: build.yml
+        run_id: ${{ github.event.workflow_run.id }}
+        name: timestamp.txt
+
+    - name: cat timestamp
+      run: cat timestamp.txt
 
   # stage:
   #   runs-on: ubuntu-latest
