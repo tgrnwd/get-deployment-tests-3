@@ -45,3 +45,15 @@ jobs:
           asset_path: ./timestamp.txt
           asset_name: timestamp.txt
           asset_content_type: text/plain
+
+      - uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          allowUpdates: true
+          draft: true
+          tag: ${{ steps.get-release.outputs.tag_name }}
+          artifacts: 'timestamp.txt'
+          omitBodyDuringUpdate: true
+          omitNameDuringUpdate: true
+          omitPrereleaseDuringUpdate: true
+          replacesArtifacts: true
