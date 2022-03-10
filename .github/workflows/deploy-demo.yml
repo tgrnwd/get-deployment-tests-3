@@ -1,12 +1,9 @@
-name: "Deploy"
+name: "Auto-Deployer Demo"
 
 on:
   workflow_run:
     workflows: [Build for Demo]
     types: [ completed ]
-
-  release:
-    types: [ published, released ]
 
   workflow_dispatch:
     inputs:
@@ -59,33 +56,3 @@ jobs:
 
     - name: cat timestamp
       run: cat timestamp.txt
-
-  # stage:
-  #   runs-on: ubuntu-latest
-  #   if: ${{ github.event.release.prerelease == true }}
-  #   environment: stage
-  #   steps:
-  #   - uses: robinraju/release-downloader@v1.3
-  #     name: download release asset
-  #     with: 
-  #       repository: ${{ github.repository }}
-  #       tag: ${{ github.event.release.tag_name }}
-  #       fileName: "*"
-
-  #   - name: cat timestamp
-  #     run: cat timestamp.txt
-
-  # prod:
-  #   runs-on: ubuntu-latest
-  #   if: ${{ github.event.action == 'released' && github.event.release.prerelease == false }}
-  #   environment: prod
-  #   steps:
-  #   - uses: robinraju/release-downloader@v1.3
-  #     name: download release asset
-  #     with: 
-  #       repository: ${{ github.repository }}
-  #       tag: ${{ github.event.release.tag_name }}
-  #       fileName: "*"
-
-  #   - name: cat timestamp
-  #     run: cat timestamp.txt
