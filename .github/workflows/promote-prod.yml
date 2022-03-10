@@ -12,16 +12,18 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN  }}
           environment: stage
 
-      # - uses: cardinalby/git-get-release-action@v1
-      #   id: get-release
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
-      #   with:
-      #     commitSha: ${{ steps.get-deployment-action.outputs.sha }}
+      - uses: cardinalby/git-get-release-action@v1
+        id: get-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
+        with:
+          commitSha: ${{ steps.get-deployment-action.outputs.sha }}
 
-      # - uses: ncipollo/release-action@v1
-      #   with:
-      #     token: ${{ secrets.GH_RELEASE_TOKEN }}
-      #     allowUpdates: true
-      #     draft: false
-      #     tag: ${{ steps.get-release.outputs.tag_name }}
+      - uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GH_RELEASE_TOKEN }}
+          allowUpdates: true
+          prerelease: false
+          tag: ${{ steps.get-release.outputs.tag_name }}
+          omitBodyDuringUpdate: true
+          omitNameDuringUpdate: true
