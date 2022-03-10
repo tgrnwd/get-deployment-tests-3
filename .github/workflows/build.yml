@@ -39,7 +39,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           allowUpdates: true
           draft: true
-          tag: ${{ steps.get-release.outputs.tag_name }}
+          tag: ${{ steps.draft-release.outputs.tag_name }}
           artifacts: 'timestamp.txt'
           omitBodyDuringUpdate: true
           omitNameDuringUpdate: true
