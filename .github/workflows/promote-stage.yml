@@ -6,25 +6,49 @@ jobs:
   get-deployment:
     runs-on: ubuntu-latest
     steps:
-      - uses: tgrnwd/get-deployment@v1
-        id: get-deployment-action
-        with:
-          token: ${{ secrets.GITHUB_TOKEN  }}
-          environment: demo
+      # - uses: tgrnwd/get-deployment@v1
+      #   id: get-deployment-action
+      #   with:
+      #     token: ${{ secrets.GITHUB_TOKEN  }}
+      #     environment: demo
 
-      - uses: cardinalby/git-get-release-action@v1
-        id: get-release
+      # - uses: cardinalby/git-get-release-action@v1
+      #   id: get-release
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
+      #   with:
+      #     commitSha: ${{ steps.get-deployment-action.outputs.sha }}
+
+      # - uses: actions/github-script@v6
+      #   name: Get Draft Release
+      #   with:
+      #     github-token: ${{ secrets.MY_PAT }}
+      #     script: |
+      #       github.rest.issues.addLabels({
+      #         issue_number: context.issue.number,
+      #         owner: context.repo.owner,
+      #         repo: context.repo.repo,
+      #         labels: ['Triage']
+      #       })
+
+      # - uses: ncipollo/release-action@v1
+      #   with:
+      #     token: ${{ secrets.GH_RELEASE_TOKEN }}
+      #     allowUpdates: true
+      #     draft: false
+      #     tag: ${{ steps.get-deployment-action.outputs.ref }}
+      #     omitBodyDuringUpdate: true
+      #     omitNameDuringUpdate: true
+      #     omitPrereleaseDuringUpdate: true
+
+      - name: Find the current draft release
+        run: |
+          echo "RELEASE_VERSION=$(hub release -f "%T (%S) %n" --include-drafts | grep " (draft)" | awk '{print $1}')" >> $GITHUB_ENV
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
-        with:
-          commitSha: ${{ steps.get-deployment-action.outputs.sha }}
-
-      - uses: ncipollo/release-action@v1
-        with:
-          token: ${{ secrets.GH_RELEASE_TOKEN }}
-          allowUpdates: true
-          draft: false
-          tag: ${{ steps.get-deployment-action.outputs.ref }}
-          omitBodyDuringUpdate: true
-          omitNameDuringUpdate: true
-          omitPrereleaseDuringUpdate: true
+          GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}   
+          
+          
+      - name: Create prerelease
+        run: hub release edit ${{ env.RELEASE_VERSION }} --draft=false -m ""
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}     
