@@ -1,0 +1,47 @@
+name: "Build for Demo"
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - src/**
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build + Release Version
+        id: build_number
+        run: |
+          echo "$(date -u '+%Y.%m.%d.%H%M%S')" >> timestamp.txt
+          echo "RELEASE_VERSION=$(cat timestamp.txt)" >> $GITHUB_ENV
+
+      - name: cat timestamp
+        run: cat timestamp.txt
+
+      - name: Upload App Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: timestamp.txt
+          path: timestamp.txt
+
+      - uses: release-drafter/release-drafter@v5
+        id: draft-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
+        with:
+          prerelease: true
+          exclude-labels: hotfix
+
+      - name: Upload Release Asset
+        id: upload-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
+        with:
+          upload_url: ${{ steps.draft-release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./timestamp.txt
+          asset_name: timestamp.txt
+          asset_content_type: text/plain

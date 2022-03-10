@@ -1,0 +1,56 @@
+# name: "Promote to Stage"
+# on:
+#   workflow_dispatch:
+
+# jobs:
+#   get-deployment:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: tgrnwd/get-deployment@v1
+#         id: get-deployment-action
+#         with:
+#           token: ${{ secrets.GITHUB_TOKEN  }}
+#           environment: demo
+
+#       - name: Download artifact
+#         uses: dawidd6/action-download-artifact@v2
+#         with:
+#           github_token: ${{secrets.GITHUB_TOKEN}}
+#           commit: ${{ steps.get-deployment-action.outputs.sha }}
+#           workflow: build.yml
+#           workflow_conclusion: success
+#           name: timestamp.txt
+
+#       - name: Set Release Version from the artifact
+#         id: release_version_step
+#         run: |
+#           echo "RELEASE_VERSION=$(cat timestamp.txt)" >> $GITHUB_ENV
+
+#       - name: Create Release
+#         uses: actions/create-release@v1
+#         id: create_release
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
+#         with:
+#           tag_name: ${{ env.RELEASE_VERSION }}
+#           release_name: ${{ env.RELEASE_VERSION }}
+#           draft: true
+#           prerelease: true
+
+#       - name: Upload Release Asset
+#         id: upload-release-asset 
+#         uses: actions/upload-release-asset@v1
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
+#         with:
+#           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+#           asset_path: ./timestamp.txt
+#           asset_name: timestamp.txt
+#           asset_content_type: text/plain
+
+#       - name: Publish release
+#         uses: StuYarrow/publish-release@v1
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
+#         with:
+#           id: ${{ steps.create_release.outputs.id }}

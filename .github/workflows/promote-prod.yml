@@ -1,0 +1,27 @@
+# name: "Promote to Prod"
+# on:
+#   workflow_dispatch:
+
+# jobs:
+#   get-deployment:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: tgrnwd/get-deployment@v1
+#         id: get-deployment-action
+#         with:
+#           token: ${{ secrets.GITHUB_TOKEN  }}
+#           environment: stage
+
+#       - uses: cardinalby/git-get-release-action@v1
+#         id: get-release
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
+#         with:
+#           commitSha: ${{ steps.get-deployment-action.outputs.sha }}
+
+#       - uses: ncipollo/release-action@v1
+#         with:
+#           token: ${{ secrets.GH_RELEASE_TOKEN }}
+#           allowUpdates: true
+#           draft: false
+#           tag: ${{ steps.get-release.outputs.tag_name }}
