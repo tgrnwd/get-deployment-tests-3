@@ -1,83 +1,83 @@
-# name: "Deploy"
+name: "Deploy"
 
-# on:
-#   workflow_run:
-#     workflows: [Build for Demo]
-#     types: [ completed ]
+on:
+  workflow_run:
+    workflows: [Build for Demo]
+    types: [ completed ]
 
-#   release:
-#     types: [ published, released ]
+  release:
+    types: [ published, released ]
 
-#   workflow_dispatch:
-#     inputs:
-#       logLevel:
-#         description: 'Log level'     
-#         required: true
-#         default: 'warning' 
-#         type: choice
-#         options:
-#         - info
-#         - warning
-#         - debug 
-#       tags:
-#         description: 'Test scenario tags'
-#         required: false 
-#         type: boolean
-#       environment:
-#         description: 'Environment to run tests against'
-#         type: environment
-#         required: true 
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'     
+        required: true
+        default: 'warning' 
+        type: choice
+        options:
+        - info
+        - warning
+        - debug 
+      tags:
+        description: 'Test scenario tags'
+        required: false 
+        type: boolean
+      environment:
+        description: 'Environment to run tests against'
+        type: environment
+        required: true 
 
-# jobs:
-#   # start:
-#   #   runs-on: ubuntu-latest
-#   #   steps:
-#   #     - name: echo stuff
-#   #       run: |
-#   #         echo ${{ toJSON(github.event) }}
+jobs:
+  # start:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: echo stuff
+  #       run: |
+  #         echo ${{ toJSON(github.event) }}
 
-#   demo:
-#     runs-on: ubuntu-latest
-#     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-#     environment: demo
-#     steps:
-#     - name: Download artifact
-#       uses: dawidd6/action-download-artifact@v2
-#       with:
-#         github_token: ${{secrets.GITHUB_TOKEN}}
-#         workflow: build.yml
-#         run_id: ${{ github.event.workflow_run.id }}
-#         name: timestamp.txt
+  # demo:
+  #   runs-on: ubuntu-latest
+  #   if: ${{ github.event.workflow_run.conclusion == 'success' }}
+  #   environment: demo
+  #   steps:
+  #   - name: Download artifact
+  #     uses: dawidd6/action-download-artifact@v2
+  #     with:
+  #       github_token: ${{secrets.GITHUB_TOKEN}}
+  #       workflow: build.yml
+  #       run_id: ${{ github.event.workflow_run.id }}
+  #       name: timestamp.txt
 
-#     - name: cat timestamp
-#       run: cat timestamp.txt
+  #   - name: cat timestamp
+  #     run: cat timestamp.txt
 
-#   stage:
-#     runs-on: ubuntu-latest
-#     if: ${{ github.event.release.prerelease == true }}
-#     environment: stage
-#     steps:
-#     - uses: robinraju/release-downloader@v1.3
-#       name: download release asset
-#       with: 
-#         repository: ${{ github.repository }}
-#         tag: ${{ github.event.release.tag_name }}
-#         fileName: "*"
+  # stage:
+  #   runs-on: ubuntu-latest
+  #   if: ${{ github.event.release.prerelease == true }}
+  #   environment: stage
+  #   steps:
+  #   - uses: robinraju/release-downloader@v1.3
+  #     name: download release asset
+  #     with: 
+  #       repository: ${{ github.repository }}
+  #       tag: ${{ github.event.release.tag_name }}
+  #       fileName: "*"
 
-#     - name: cat timestamp
-#       run: cat timestamp.txt
+  #   - name: cat timestamp
+  #     run: cat timestamp.txt
 
-#   prod:
-#     runs-on: ubuntu-latest
-#     if: ${{ github.event.action == 'released' && github.event.release.prerelease == false }}
-#     environment: prod
-#     steps:
-#     - uses: robinraju/release-downloader@v1.3
-#       name: download release asset
-#       with: 
-#         repository: ${{ github.repository }}
-#         tag: ${{ github.event.release.tag_name }}
-#         fileName: "*"
+  # prod:
+  #   runs-on: ubuntu-latest
+  #   if: ${{ github.event.action == 'released' && github.event.release.prerelease == false }}
+  #   environment: prod
+  #   steps:
+  #   - uses: robinraju/release-downloader@v1.3
+  #     name: download release asset
+  #     with: 
+  #       repository: ${{ github.repository }}
+  #       tag: ${{ github.event.release.tag_name }}
+  #       fileName: "*"
 
-#     - name: cat timestamp
-#       run: cat timestamp.txt
+  #   - name: cat timestamp
+  #     run: cat timestamp.txt
