@@ -20,7 +20,7 @@ jobs:
           [[ ! -z "${RELEASE_TAG// }" ]] && hub release edit $RELEASE_TAG --draft=false -m ""
           [[ -z "${RELEASE_TAG// }" ]] && echo "Release Not Found"
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # - uses: ncipollo/release-action@v1
       #   with:
