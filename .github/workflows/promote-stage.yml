@@ -14,8 +14,11 @@ jobs:
       - name: Publish the Current Draft Release
         run: |
           RELEASE_TAG=$(hub release -f "%T (%S) %n" --include-drafts | grep " (draft)" | awk '{print $1}')
-          [[ ! -z "${RELEASE_TAG// }" ]] && hub release edit $RELEASE_TAG --draft=false -m ""
-          [[ -z "${RELEASE_TAG// }" ]] && echo "Release Not Found"
+          if [[ $RELEASE_TAG = *[!\ ]* ]]; then
+            hub release edit $RELEASE_TAG --draft=false -m ""
+          else
+            echo "Release Not Found"
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
 
