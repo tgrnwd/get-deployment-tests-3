@@ -15,6 +15,8 @@ jobs:
         run: |
           RELEASE_TAG=$(hub release -f "%T (%S) %n" --include-drafts | grep " (draft)" | awk '{print $1}')
           echo "$RELEASE_TAG"
+          RELEASE_TAG_2=$(hub release -f "%T (%S) %n" --include-drafts | grep " (draft)" | awk '{print $1}' | xargs -t -n1 echo)
+          echo "$RELEASE_TAG_2"
           [[ ! -z "${RELEASE_TAG// }" ]] && hub release edit $RELEASE_TAG --draft=false -m ""
           [[ -z "${RELEASE_TAG// }" ]] && echo "Release Not Found"
         env:
