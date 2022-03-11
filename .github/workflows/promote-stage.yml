@@ -14,14 +14,13 @@ jobs:
       - name: Publish the Current Draft Release
         run: |
           RELEASE_TAG=$(hub release -f "%T (%S) %n" --include-drafts | grep " (draft)" | awk '{print $1}')
-          echo "$RELEASE_TAG"
           if [[ $RELEASE_TAG = *[!\ ]* ]]; then
             hub release edit $RELEASE_TAG --draft=false -m ""
           else
             echo "Release Not Found"
           fi
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
 
       # - uses: ncipollo/release-action@v1
       #   with:
