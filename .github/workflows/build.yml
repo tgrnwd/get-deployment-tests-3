@@ -8,6 +8,8 @@ on:
       - src/**
   workflow_dispatch:
 
+
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -23,12 +25,20 @@ jobs:
           cat timestamp.txt
 
       - name: Remove any current draft releases
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           EXISTING_RELEASE_TAG=$(hub release -f "%T (%S) %n" --include-drafts | grep " (draft)" | awk '{print $1}')
-          [[ ! -z "${EXISTING_RELEASE_TAG// }" ]] && hub release delete $EXISTING_RELEASE_TAG && echo "RELEASE_VERSION=$EXISTING_RELEASE_TAG" >> $GITHUB_ENV
-          gh release create ${{ env.RELEASE_VERSION }} -d -p --generate-notes 'timestamp.txt'
+          if [[ $EXISTING_RELEASE_TAG = *[!\ ]* ]]; then
+            hub release delete $EXISTING_RELEASE_TAG
+            echo "RELEASE_VERSION=$EXISTING_RELEASE_TAG" >> $GITHUB_ENV
+          fi
+
+      - name: Draft Release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create ${{ env.RELEASE_VERSION }} -d -p --generate-notes 'timestamp.txt'
 
       - name: Upload App Artifacts
         uses: actions/upload-artifact@v2
