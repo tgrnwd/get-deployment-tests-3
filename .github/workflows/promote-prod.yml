@@ -25,6 +25,6 @@ jobs:
 
       - name: Set Prerelease to Release
         run: |
-          hub release edit ${{ env.RELEASE_VERSION }} --prerelease=false -m ""
+          hub release edit ${{ steps.get-release.outputs.tag_name }} --prerelease=false -m ""
         env:
           GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
