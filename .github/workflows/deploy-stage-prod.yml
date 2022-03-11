@@ -37,12 +37,11 @@ jobs:
     if: ${{ github.event.release.prerelease == true }}
     environment: stage
     steps:
-    - uses: robinraju/release-downloader@v1.3
-      name: download release asset
-      with: 
-        repository: ${{ github.repository }}
-        tag: ${{ github.event.release.tag_name }}
-        fileName: "*"
+    - name: Download Release
+      run: |
+        gh release download ${{ github.event.release.tag_name }} -p 'timestamp.txt'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: cat timestamp
       run: cat timestamp.txt
@@ -52,12 +51,11 @@ jobs:
     if: ${{ github.event.action == 'released' && github.event.release.prerelease == false }}
     environment: prod
     steps:
-    - uses: robinraju/release-downloader@v1.3
-      name: download release asset
-      with: 
-        repository: ${{ github.repository }}
-        tag: ${{ github.event.release.tag_name }}
-        fileName: "*"
+    - name: Download Release
+      run: |
+        gh release download ${{ github.event.release.tag_name }} -p 'timestamp.txt'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: cat timestamp
       run: cat timestamp.txt

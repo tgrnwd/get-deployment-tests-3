@@ -1,4 +1,4 @@
-name: "Promote to Prod"
+name: "Promote STAGE to PROD"
 on:
   workflow_dispatch:
 
@@ -15,15 +15,13 @@ jobs:
       - uses: cardinalby/git-get-release-action@v1
         id: get-release
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           commitSha: ${{ steps.get-deployment-action.outputs.sha }}
+          # tag: ${{ steps.get-deployment-action.outputs.ref }}
 
-      - uses: ncipollo/release-action@v1
-        with:
-          token: ${{ secrets.GH_RELEASE_TOKEN }}
-          allowUpdates: true
-          prerelease: false
-          tag: ${{ steps.get-release.outputs.tag_name }}
-          omitBodyDuringUpdate: true
-          omitNameDuringUpdate: true
+      - name: Set Prerelease to Release
+        run: |
+          hub release edit ${{ env.RELEASE_VERSION }} --prerelease=false -m ""
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}

@@ -12,36 +12,26 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Build + Release Version
         id: build_number
         run: |
           echo "$(date -u '+%Y.%m.%d.%H%M%S')" >> timestamp.txt
           echo "RELEASE_VERSION=$(cat timestamp.txt)" >> $GITHUB_ENV
+          cat timestamp.txt
 
-      - name: cat timestamp
-        run: cat timestamp.txt
+      - name: Remove any current draft releases
+        run: |
+          EXISTING_RELEASE_TAG=$(hub release -f "%T (%S) %n" --include-drafts | grep " (draft)" | awk '{print $1}')
+          [[ ! -z "${EXISTING_RELEASE_TAG// }" ]] && hub release delete $EXISTING_RELEASE_TAG && echo "RELEASE_VERSION=$EXISTING_RELEASE_TAG" >> $GITHUB_ENV
+          gh release create ${{ env.RELEASE_VERSION }} -d -p --generate-notes 'timestamp.txt'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload App Artifacts
         uses: actions/upload-artifact@v2
         with:
           name: timestamp.txt
           path: timestamp.txt
-
-      - uses: release-drafter/release-drafter@v5
-        id: draft-release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          prerelease: true
-
-      - uses: ncipollo/release-action@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          allowUpdates: true
-          draft: true
-          tag: ${{ steps.draft-release.outputs.tag_name }}
-          artifacts: 'timestamp.txt'
-          omitBodyDuringUpdate: true
-          omitNameDuringUpdate: true
-          omitPrereleaseDuringUpdate: true
-          replacesArtifacts: true
