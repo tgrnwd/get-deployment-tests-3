@@ -18,16 +18,7 @@ jobs:
             hub release edit $RELEASE_TAG --draft=false -m ""
           else
             echo "Release Not Found"
+            exit 1
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
-
-      # - uses: ncipollo/release-action@v1
-      #   with:
-      #     token: ${{ secrets.GH_RELEASE_TOKEN }}
-      #     allowUpdates: true
-      #     draft: false
-      #     tag: ${{ steps.get-deployment-action.outputs.ref }}
-      #     omitBodyDuringUpdate: true
-      #     omitNameDuringUpdate: true
-      #     omitPrereleaseDuringUpdate: true 

@@ -44,7 +44,12 @@ jobs:
     - name: Download Release
       run: |
         DRAFT_RELEASE=$(hub release -f "%T (%S) %n" --include-drafts | grep " (draft)" | awk '{print $1}')
-        [[ ! -z "${DRAFT_RELEASE// }" ]] && gh release download $DRAFT_RELEASE -p 'timestamp.txt'
+        if [[ $DRAFT_RELEASE = *[!\ ]* ]]; then
+          gh release download $DRAFT_RELEASE -p 'timestamp.txt'
+        else
+          echo "Didn't find a draft release to deploy"
+          exit 1
+        fi
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
